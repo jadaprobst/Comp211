@@ -4,35 +4,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    int in_single = 0, in_double = 0;
-    int prev = '\n';
+int main(void) {
+    int in_quote = 0;
     int c;
+
     while ((c = getchar()) != EOF) {
-        if (!in_single && !in_double && c == '#' &&
-            (prev == '\n' || prev == ' ' || prev == '\t')) {
-            while ((c = getchar()) != EOF && c != '\n');
-            if (c == EOF) break;
-            putchar('\n');
-            prev = '\n';
+        /* a double quote toggles whether we're inside a string literal;
+           the quote character itself is still printed verbatim */
+        if (c == '"') {
+            in_quote = !in_quote;
+            putchar(c);
             continue;
         }
 
-        if (c == '\'' && in_single) {
-            putchar(c);
-            if ((c = getchar()) == EOF) break;
-            putchar(c);
-            prev = 'x';
+        /* outside a string literal, '#' begins a comment */
+        if (!in_quote && c == '#') {
+            while ((c = getchar()) != EOF &&
+                   c != '\n');   /* suppress output, extra '#'s included */
+            if (c == EOF) break; /* never putchar(EOF) */
+            putchar('\n');       /* output resumes at end of line */
             continue;
         }
-
-        if (c == '\'' && !in_double)
-            in_single = !in_single;
-        else if (c == '"' && !in_single)
-            in_double = !in_double;
 
         putchar(c);
-        prev = c;
     }
     return EXIT_SUCCESS;
 }

@@ -1,5 +1,5 @@
 // PID: 730844590
-// I pledge the Comp211 honor code.
+// I pledge the COMP211 honor code.
 
 #include <stdio.h>
 #include <stdlib.h>
